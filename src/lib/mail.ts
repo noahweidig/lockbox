@@ -53,3 +53,15 @@ export const verifyMail = (to: string, url: string): Mail => ({
   text: `Confirm your email: ${url}`,
   html: layout("Confirm your email", "Confirm this address so you can recover your account.", url, "Confirm email"),
 });
+
+export const passkeyMail = (to: string, url: string): Mail => ({
+  to,
+  subject: "A passkey was added to your LokBoks account",
+  text: `A new passkey was added to your account. It can answer retrieval check-ins after 24 hours. If this wasn't you, change your password now: ${url}`,
+  html: layout(
+    "A passkey was added",
+    "A new passkey was added to your account. It can answer retrieval check-ins after 24 hours. If this wasn't you, change your password now.",
+    url,
+    "Open settings",
+  ),
+});

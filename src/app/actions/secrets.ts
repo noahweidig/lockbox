@@ -15,6 +15,14 @@ const MAX_MINUTES = 365 * 1440;
 const MAX_SECRETS = 100;
 const uuid = z.string().uuid();
 const minutes = z.coerce.number().int().min(MIN_MINUTES, "Lock for at least 5 minutes").max(MAX_MINUTES, "Maximum lock is 365 days");
+const MAX_RETRIEVAL_MINUTES = 120;
+const retrieval = z.coerce.number().int().min(0).max(MAX_RETRIEVAL_MINUTES, "Retrieval task can be at most 2 hours").default(0);
+
+async function needsPasskey(userId: string, retrievalMinutes: number): Promise<string | null> {
+  if (retrievalMinutes <= 0) return null;
+  const [{ n }] = await sql<{ n: number }>`SELECT count(*)::int AS n FROM passkeys WHERE user_id = ${userId}`;
+  return n ? null : "Add a passkey in Settings before using a retrieval task";
+}
 
 export async function createSecret(_: State, fd: FormData): Promise<State> {
   const user = await requireUser();
@@ -24,19 +32,24 @@ export async function createSecret(_: State, fd: FormData): Promise<State> {
       kind: z.enum(["screentime", "password", "pin", "note"]),
       value: z.string().min(1, "Enter the secret").max(2000),
       minutes,
+      retrieval,
     })
     .safeParse(Object.fromEntries(fd));
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Invalid input" };
 
   const [{ n }] = await sql<{ n: number }>`SELECT count(*)::int AS n FROM secrets WHERE user_id = ${user.id}`;
   if (n >= MAX_SECRETS) return { error: `Limit of ${MAX_SECRETS} secrets reached` };
+  const noKey = await needsPasskey(user.id, parsed.data.retrieval);
+  if (noKey) return { error: noKey };
 
   const id = crypto.randomUUID();
   const payload = encryptSecret(parsed.data.value, user.id, id);
-  await sql`INSERT INTO secrets (id, user_id, label, kind, payload, unlock_at)
+  await sql`INSERT INTO secrets (id, user_id, label, kind, payload, unlock_at, retrieval_seconds)
     VALUES (${id}, ${user.id}, ${parsed.data.label}, ${parsed.data.kind}, ${payload},
-      now() + make_interval(mins => ${parsed.data.minutes}))`;
-  await logEvent(user.id, "secret_locked", { id, label: parsed.data.label, minutes: parsed.data.minutes });
+      now() + make_interval(mins => ${parsed.data.minutes}), ${parsed.data.retrieval * 60})`;
+  await logEvent(user.id, "secret_locked", {
+    id, label: parsed.data.label, minutes: parsed.data.minutes, retrieval: parsed.data.retrieval,
+  });
   redirect(`/vault/${id}`);
 }
 
@@ -44,20 +57,24 @@ export async function createSecret(_: State, fd: FormData): Promise<State> {
 export async function createGuidedSecret(fd: FormData): Promise<{ error: string } | { id: string; code: string }> {
   const user = await requireUser();
   const parsed = z
-    .object({ label: z.string().trim().min(1, "Give it a name").max(80), minutes })
+    .object({ label: z.string().trim().min(1, "Give it a name").max(80), minutes, retrieval })
     .safeParse(Object.fromEntries(fd));
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Invalid input" };
 
   const [{ n }] = await sql<{ n: number }>`SELECT count(*)::int AS n FROM secrets WHERE user_id = ${user.id}`;
   if (n >= MAX_SECRETS) return { error: `Limit of ${MAX_SECRETS} secrets reached` };
+  const noKey = await needsPasskey(user.id, parsed.data.retrieval);
+  if (noKey) return { error: noKey };
 
   const id = crypto.randomUUID();
   const code = String(randomInt(0, 10000)).padStart(4, "0");
   const payload = encryptSecret(code, user.id, id);
-  await sql`INSERT INTO secrets (id, user_id, label, kind, payload, unlock_at)
+  await sql`INSERT INTO secrets (id, user_id, label, kind, payload, unlock_at, retrieval_seconds)
     VALUES (${id}, ${user.id}, ${parsed.data.label}, 'screentime', ${payload},
-      now() + make_interval(mins => ${parsed.data.minutes}))`;
-  await logEvent(user.id, "secret_locked", { id, label: parsed.data.label, minutes: parsed.data.minutes, guided: true });
+      now() + make_interval(mins => ${parsed.data.minutes}), ${parsed.data.retrieval * 60})`;
+  await logEvent(user.id, "secret_locked", {
+    id, label: parsed.data.label, minutes: parsed.data.minutes, retrieval: parsed.data.retrieval, guided: true,
+  });
   return { id, code };
 }
 
@@ -102,10 +119,20 @@ export async function revealSecret(_: State, fd: FormData): Promise<State> {
       error: `Reveals are paused after a password change until ${new Date(user.reveal_blocked_until).toUTCString()}.`,
     };
 
-  const [s] = await sql<{ id: string; payload: string; unlock_at: string }>`
-    SELECT id, payload, unlock_at FROM secrets WHERE id = ${parsed.data.id} AND user_id = ${user.id}`;
+  const [s] = await sql<{ id: string; payload: string; unlock_at: string; retrieval_seconds: number }>`
+    SELECT id, payload, unlock_at, retrieval_seconds FROM secrets WHERE id = ${parsed.data.id} AND user_id = ${user.id}`;
   if (!s) return { error: "Not found" };
   if (new Date(s.unlock_at) > new Date()) return { error: "Still locked" };
+
+  let retrievalId: string | undefined;
+  if (s.retrieval_seconds > 0) {
+    const [done] = await sql<{ id: string }>`
+      SELECT id FROM retrievals
+      WHERE secret_id = ${s.id} AND user_id = ${user.id} AND state = 'done' AND completed_at > now() - interval '10 minutes'
+      ORDER BY completed_at DESC LIMIT 1`;
+    if (!done) return { error: "Finish the retrieval task first" };
+    retrievalId = done.id;
+  }
 
   let value: string;
   try {
@@ -113,6 +140,7 @@ export async function revealSecret(_: State, fd: FormData): Promise<State> {
   } catch {
     return { error: "Couldn't decrypt. Check ENCRYPTION_KEY." };
   }
+  if (retrievalId) await sql`UPDATE retrievals SET state = 'used' WHERE id = ${retrievalId}`;
   await sql`UPDATE secrets SET reveal_count = reveal_count + 1, last_revealed_at = now() WHERE id = ${s.id}`;
   await logEvent(user.id, "secret_revealed", { id: s.id });
   return { value };

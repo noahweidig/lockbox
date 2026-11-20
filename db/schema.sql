@@ -64,3 +64,41 @@ CREATE INDEX IF NOT EXISTS rate_limits_key_idx ON rate_limits(key, created_at);
 ALTER TABLE users ADD COLUMN IF NOT EXISTS role text NOT NULL DEFAULT 'user';
 
 ALTER TABLE users ADD COLUMN IF NOT EXISTS suspended_at timestamptz;
+
+ALTER TABLE secrets ADD COLUMN IF NOT EXISTS retrieval_seconds integer NOT NULL DEFAULT 0;
+
+CREATE TABLE IF NOT EXISTS passkeys (
+  id text PRIMARY KEY,
+  user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  public_key text NOT NULL,
+  counter integer NOT NULL DEFAULT 0,
+  transports text,
+  label text NOT NULL DEFAULT 'Passkey',
+  created_at timestamptz NOT NULL DEFAULT now(),
+  last_used_at timestamptz
+);
+
+CREATE INDEX IF NOT EXISTS passkeys_user_idx ON passkeys(user_id);
+
+CREATE TABLE IF NOT EXISTS passkey_challenges (
+  user_id uuid PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+  challenge text NOT NULL,
+  expires_at timestamptz NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS retrievals (
+  id uuid PRIMARY KEY,
+  secret_id uuid NOT NULL REFERENCES secrets(id) ON DELETE CASCADE,
+  user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  started_at timestamptz NOT NULL DEFAULT now(),
+  required_seconds integer NOT NULL,
+  state text NOT NULL DEFAULT 'active' CHECK (state IN ('active', 'done', 'failed', 'used')),
+  next_check_at timestamptz NOT NULL,
+  challenge text,
+  challenge_deadline timestamptz,
+  checks_passed integer NOT NULL DEFAULT 0,
+  completed_at timestamptz,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS retrievals_secret_idx ON retrievals(secret_id, created_at DESC);
