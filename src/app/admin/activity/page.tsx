@@ -16,9 +16,9 @@ export default async function ActivityPage() {
           <tbody>
             {events.map((e, i) => (
               <tr key={i}>
-                <td className="mono">{new Date(e.created_at).toISOString().slice(0, 16).replace("T", " ")}</td>
-                <td><Link href={`/admin/users/${e.user_id}`}>{e.email}</Link></td>
-                <td>
+                <td data-label="When" className="mono">{new Date(e.created_at).toISOString().slice(0, 16).replace("T", " ")}</td>
+                <td data-label="User"><Link href={`/admin/users/${e.user_id}`}>{e.email}</Link></td>
+                <td data-label="Event">
                   {EVENT_LABELS[e.type] ?? e.type}
                   {e.meta?.by && <span className="muted"> · by {e.meta.by}</span>}
                 </td>

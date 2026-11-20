@@ -2,6 +2,7 @@ import Link from "next/link";
 import { verifyEmail } from "@/app/actions/auth";
 import { ActionForm } from "@/components/ActionForm";
 import { Logo } from "@/components/Logo";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export const metadata = { title: "Confirm email" };
 
@@ -9,7 +10,7 @@ export default async function Verify({ searchParams }: { searchParams: Promise<{
   const { token } = await searchParams;
   return (
     <div className="wrap">
-      <header className="nav"><Logo /></header>
+      <header className="nav"><Logo /><nav><ThemeToggle /></nav></header>
       <main className="narrow auth">
         <div className="card">
           <h1>Confirm your email</h1>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, Ban, GitFork, KeyRound, Lock, ShieldCheck, Snowflake, Timer } from "lucide-react";
 import { Logo } from "@/components/Logo";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { getUser } from "@/lib/auth";
 
 const features = [
@@ -25,6 +26,7 @@ export default async function Home() {
       <header className="nav">
         <Logo />
         <nav>
+          <ThemeToggle />
           {user ? (
             <Link href="/vault" className="btn btn-primary">Open vault</Link>
           ) : (

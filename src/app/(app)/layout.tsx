@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { LogOut, Settings, Shield, Vault } from "lucide-react";
 import { logout } from "@/app/actions/auth";
-import { ResendVerification } from "@/components/ResendVerification";
 import { Logo } from "@/components/Logo";
+import { ResendVerification } from "@/components/ResendVerification";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { isAdmin, requireUser } from "@/lib/auth";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
@@ -12,11 +13,12 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <header className="nav">
         <Logo />
         <nav>
-          <Link href="/vault"><Vault size={16} style={{ verticalAlign: -3 }} /> Vault</Link>
-          {isAdmin(user) && <Link href="/admin"><Shield size={16} style={{ verticalAlign: -3 }} /> Admin</Link>}
-          <Link href="/settings"><Settings size={16} style={{ verticalAlign: -3 }} /> Settings</Link>
+          <Link href="/vault" aria-label="Vault"><Vault size={18} /><span className="lbl">Vault</span></Link>
+          {isAdmin(user) && <Link href="/admin" aria-label="Admin"><Shield size={18} /><span className="lbl">Admin</span></Link>}
+          <Link href="/settings" aria-label="Settings"><Settings size={18} /><span className="lbl">Settings</span></Link>
+          <ThemeToggle />
           <form action={logout}>
-            <button className="link"><LogOut size={16} style={{ verticalAlign: -3 }} /> Sign out</button>
+            <button className="link" aria-label="Sign out"><LogOut size={18} /><span className="lbl">Sign out</span></button>
           </form>
         </nav>
       </header>

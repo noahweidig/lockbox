@@ -30,7 +30,7 @@ export default async function UsersPage({ searchParams }: { searchParams: Promis
     <>
       <div className="page-head">
         <h1>Users</h1>
-        <form action="/admin/users" className="row search">
+        <form action="/admin/users" className="row search" role="search">
           <Search size={16} color="var(--muted)" />
           <input name="q" defaultValue={sp.q ?? ""} placeholder="Search name or email" aria-label="Search users" />
         </form>
@@ -43,19 +43,19 @@ export default async function UsersPage({ searchParams }: { searchParams: Promis
           <tbody>
             {shown.map((u) => (
               <tr key={u.id}>
-                <td>
+                <td data-label="User">
                   <Link href={`/admin/users/${u.id}`}><b>{u.email}</b></Link>
                   {u.name && <div className="muted">{u.name}</div>}
                 </td>
-                <td>
-                  <div className="row" style={{ gap: 6 }}>
+                <td data-label="Status">
+                  <div className="row" style={{ gap: 6, justifyContent: "flex-end" }}>
                     {u.role === "admin" && <span className="badge badge-locked">Admin</span>}
                     {u.suspended_at && <span className="badge badge-bad">Suspended</span>}
                     {!u.email_verified_at && <span className="badge badge-warn">Unconfirmed</span>}
                   </div>
                 </td>
-                <td>{u.locked} active / {u.secrets}</td>
-                <td className="mono">{new Date(u.created_at).toISOString().slice(0, 10)}</td>
+                <td data-label="Locks">{u.locked} active / {u.secrets}</td>
+                <td data-label="Joined" className="mono">{new Date(u.created_at).toISOString().slice(0, 10)}</td>
               </tr>
             ))}
             {shown.length === 0 && (
