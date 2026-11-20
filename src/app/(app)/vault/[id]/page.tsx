@@ -96,18 +96,21 @@ export default async function SecretPage({ params }: { params: Promise<{ id: str
         </p>
       </div>
 
-      {!s.locked && (
-        <div className="card stack danger">
-          <h3><Trash2 size={16} style={{ verticalAlign: -3 }} /> Delete</h3>
-          <ActionForm action={deleteSecret} submit="Delete secret" buttonClass="btn btn-danger">
-            <input type="hidden" name="id" value={s.id} />
-            <div className="field">
-              <label htmlFor="dp">Confirm your password</label>
-              <input id="dp" name="password" type="password" autoComplete="current-password" required />
-            </div>
-          </ActionForm>
-        </div>
-      )}
+      <div className="card stack danger">
+        <h3><Trash2 size={16} style={{ verticalAlign: -3 }} /> Delete</h3>
+        <p className="hint">
+          {s.locked
+            ? "Destroys the secret now, before the lock ends. It can't be recovered, and nothing changes on the device it was set on."
+            : "Permanent. The secret can't be recovered."}
+        </p>
+        <ActionForm action={deleteSecret} submit="Delete secret" buttonClass="btn btn-danger">
+          <input type="hidden" name="id" value={s.id} />
+          <div className="field">
+            <label htmlFor="dp">Confirm your password</label>
+            <input id="dp" name="password" type="password" autoComplete="current-password" required />
+          </div>
+        </ActionForm>
+      </div>
     </div>
   );
 }

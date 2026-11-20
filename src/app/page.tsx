@@ -8,7 +8,7 @@ const features = [
   [Timer, "Time locks", "Pick 5 minutes to 365 days. Until the clock runs out, the server will not hand the secret over."],
   [ShieldCheck, "Encrypted at rest", "AES-256-GCM with a separate key per secret. The database only holds ciphertext."],
   [KeyRound, "Many secrets", "Keep a Screen Time passcode for each kid or device, plus passwords, PINs, and notes."],
-  [Ban, "No early release", "Locks can be extended but never shortened from your account, and no one can read your secrets from the admin panel."],
+  [Ban, "No early release", "Locks can be extended but never shortened from your account, and no one can read your secrets from the admin panel. You can still delete a secret to destroy it."],
   [Snowflake, "Cooling-off period", "Changing or resetting your password pauses reveals for 24 hours, so a reset can't skip the wait."],
   [GitFork, "Open source", "MIT licensed. Read it, audit it, host your own copy on Vercel with a Neon database."],
 ] as const;

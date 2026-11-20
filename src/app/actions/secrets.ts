@@ -152,9 +152,9 @@ export async function deleteSecret(_: State, fd: FormData): Promise<State> {
   if (!parsed.success) return { error: "Enter your password" };
   if (!(await allow(`reveal:${user.id}`, 10, 900))) return { error: "Too many attempts. Try again in 15 minutes." };
   if (!(await verifyPassword(parsed.data.password, user.password_hash))) return { error: "Wrong password" };
-  const rows = await sql`DELETE FROM secrets
-    WHERE id = ${parsed.data.id} AND user_id = ${user.id} AND unlock_at <= now() RETURNING id`;
-  if (!rows.length) return { error: "Locked secrets can't be deleted until they unlock" };
-  await logEvent(user.id, "secret_deleted", { id: parsed.data.id });
+  const rows = await sql<{ was_locked: boolean }>`DELETE FROM secrets
+    WHERE id = ${parsed.data.id} AND user_id = ${user.id} RETURNING unlock_at > now() AS was_locked`;
+  if (!rows.length) return { error: "Not found" };
+  await logEvent(user.id, "secret_deleted", { id: parsed.data.id, was_locked: rows[0].was_locked });
   redirect("/vault");
 }

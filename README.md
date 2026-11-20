@@ -4,7 +4,7 @@ Open source time-lock vault for Screen Time passcodes and other secrets. Next.js
 
 - Accounts, email verification, password reset, change password, account deletion
 - Many secrets per account, locked 5 minutes to 365 days
-- Locks can only be extended by the user. AES-256-GCM with a per-secret key. Reveal needs the account password.
+- Locks can only be extended by the user; a secret can be deleted at any time with the account password, which destroys it. AES-256-GCM with a per-secret key. Reveal needs the account password.
 - 24-hour reveal pause after any password change or reset
 - Optional retrieval task (up to 2 hours) per lock: after the lock ends, reading it needs a server-timed wait with random passkey check-ins (Face ID, Touch ID or device PIN). Passkeys are managed in Settings and count only after 24 hours
 - Guided Screen Time entry at `/vault/guided`: random 4-digit code, locked first, then entered on the iPhone twice one digit at a time, each digit gated by a number task
