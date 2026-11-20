@@ -3,15 +3,40 @@
 import { useState } from "react";
 import { Dices, Eye, EyeOff } from "lucide-react";
 
+const LOWER = "abcdefghijklmnopqrstuvwxyz";
+const UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const DIGITS = "0123456789";
+const SYMBOLS = "!@#$%^&*()-_=+[]{};:,.?";
+
+const GEN = {
+  digits: { label: "Digits only", sets: [DIGITS], lens: [4, 6, 8], def: 6 },
+  alnum: { label: "Letters + digits", sets: [LOWER, UPPER, DIGITS], lens: [12, 16, 20, 24, 32], def: 16 },
+  full: { label: "Letters + digits + symbols", sets: [LOWER, UPPER, DIGITS, SYMBOLS], lens: [12, 16, 20, 24, 32], def: 16 },
+};
+type GenKind = keyof typeof GEN;
+
+function randomString(sets: string[], len: number) {
+  const all = sets.join("");
+  const max = Math.floor(0x100000000 / all.length) * all.length;
+  const buf = new Uint32Array(1);
+  for (;;) {
+    let out = "";
+    while (out.length < len) {
+      crypto.getRandomValues(buf);
+      if (buf[0] < max) out += all[buf[0] % all.length];
+    }
+    if (sets.every((s) => [...out].some((c) => s.includes(c)))) return out;
+  }
+}
+
 export function PasscodeField() {
   const [value, setValue] = useState("");
   const [shown, setShown] = useState(false);
-  const [len, setLen] = useState(6);
+  const [kind, setKind] = useState<GenKind>("digits");
+  const [len, setLen] = useState(GEN.digits.def);
 
   function generate() {
-    const buf = new Uint32Array(len);
-    crypto.getRandomValues(buf);
-    setValue(Array.from(buf, (n) => n % 10).join(""));
+    setValue(randomString(GEN[kind].sets, len));
     setShown(true);
   }
 
@@ -35,13 +60,22 @@ export function PasscodeField() {
         </button>
       </div>
       <div className="row gen">
-        <select value={len} onChange={(e) => setLen(+e.target.value)} aria-label="Digits">
-          <option value={4}>4 digits</option>
-          <option value={6}>6 digits</option>
-          <option value={8}>8 digits</option>
+        <select
+          value={kind}
+          onChange={(e) => {
+            const k = e.target.value as GenKind;
+            setKind(k);
+            setLen(GEN[k].def);
+          }}
+          aria-label="Character types"
+        >
+          {Object.entries(GEN).map(([k, g]) => <option key={k} value={k}>{g.label}</option>)}
+        </select>
+        <select value={len} onChange={(e) => setLen(+e.target.value)} aria-label="Length">
+          {GEN[kind].lens.map((n) => <option key={n} value={n}>{n} {kind === "digits" ? "digits" : "chars"}</option>)}
         </select>
         <button type="button" className="btn btn-ghost" onClick={generate}>
-          <Dices size={18} /> Generate random passcode
+          <Dices size={18} /> Generate random
         </button>
       </div>
       <p className="hint">
