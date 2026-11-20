@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Ban, GitFork, KeyRound, Lock, ShieldCheck, Snowflake, Timer } from "lucide-react";
+import { ArrowRight, Ban, GitFork, KeyRound, Lock, ShieldCheck, Snowflake, Timer, Vault } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { getUser } from "@/lib/auth";
@@ -28,7 +28,7 @@ export default async function Home() {
         <nav>
           <ThemeToggle />
           {user ? (
-            <Link href="/vault" className="btn btn-primary">Open vault</Link>
+            <Link href="/vault" className="btn btn-primary"><Vault size={16} /> Open vault</Link>
           ) : (
             <>
               <Link href="/login">Sign in</Link>
