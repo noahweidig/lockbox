@@ -10,7 +10,7 @@ export const metadata = { title: "New lock" };
 export default function NewSecret() {
   return (
     <div className="narrow" style={{ width: "min(560px, 100%)" }}>
-      <Link href="/vault" className="hint"><ArrowLeft size={14} style={{ verticalAlign: -2 }} /> Back to vault</Link>
+      <Link href="/vault" className="back"><ArrowLeft size={16} /> Back to vault</Link>
       <div className="page-head"><h1>Lock a secret</h1></div>
       <div className="card">
         <ActionForm action={createSecret} submit="Lock it away">

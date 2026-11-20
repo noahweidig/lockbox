@@ -48,7 +48,7 @@ export default async function AdminUser({ params }: { params: Promise<{ id: stri
 
   return (
     <div className="stack">
-      <Link href="/admin/users" className="hint"><ArrowLeft size={14} style={{ verticalAlign: -2 }} /> All users</Link>
+      <Link href="/admin/users" className="back"><ArrowLeft size={16} /> All users</Link>
       <div className="page-head" style={{ margin: 0 }}>
         <div>
           <h1>{u.name || u.email}</h1>

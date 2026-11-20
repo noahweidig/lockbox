@@ -29,7 +29,7 @@ export default async function SecretPage({ params }: { params: Promise<{ id: str
 
   return (
     <div className="stack col">
-      <Link href="/vault" className="hint"><ArrowLeft size={14} style={{ verticalAlign: -2 }} /> Back to vault</Link>
+      <Link href="/vault" className="back"><ArrowLeft size={16} /> Back to vault</Link>
       <div className="page-head" style={{ margin: 0 }}>
         <div>
           <h1>{s.label}</h1>

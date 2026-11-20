@@ -250,3 +250,6 @@ form.inline .msg { margin-bottom: 8px; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 .col { width: 100%; max-width: 720px; margin-inline: auto; }
+.back { display: inline-flex; align-items: center; gap: 6px; align-self: flex-start; width: fit-content; min-height: 36px; padding: 6px 14px 6px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); color: var(--muted); font-size: 0.9rem; font-weight: 500; }
+.back:hover { color: var(--text); background: var(--panel-2); text-decoration: none; }
+.col > .back, .narrow > .back { margin-bottom: 4px; }
