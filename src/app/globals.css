@@ -294,3 +294,12 @@ form.inline .msg { margin-bottom: 8px; }
 .back { display: inline-flex; align-items: center; gap: 6px; align-self: flex-start; width: fit-content; min-height: 36px; padding: 6px 14px 6px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); color: var(--muted); font-size: 0.9rem; font-weight: 500; }
 .back:hover { color: var(--text); background: var(--panel-2); text-decoration: none; }
 .col > .back, .narrow > .back { margin-bottom: 4px; }
+
+.guided-dots { display: flex; gap: 6px; }
+.guided-dots i { flex: 1; height: 6px; border-radius: 99px; background: var(--line); }
+.guided-dots i.done { background: var(--accent); }
+.guided-dots i.now { background: linear-gradient(135deg, var(--accent), var(--accent-2)); }
+.taskbox { display: flex; flex-direction: column; gap: 8px; padding: 16px; border-radius: 14px; background: var(--field); border: 1px dashed var(--line); font-size: clamp(1.05rem, 5vw, 1.35rem); letter-spacing: 0.06em; text-align: center; overflow-wrap: anywhere; user-select: none; -webkit-user-select: none; }
+.bigdigit { font-size: clamp(4.5rem, 28vw, 7rem); font-weight: 700; line-height: 1; text-align: center; padding: 20px; border-radius: 20px; background: var(--field); border: 1px dashed var(--accent); }
+.timerbar { height: 6px; border-radius: 99px; background: var(--line); overflow: hidden; }
+.timerbar > i { display: block; height: 100%; background: linear-gradient(135deg, var(--accent), var(--accent-2)); transition: width 1s linear; }

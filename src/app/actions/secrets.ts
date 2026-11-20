@@ -1,5 +1,6 @@
 "use server";
 
+import { randomInt } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -37,6 +38,27 @@ export async function createSecret(_: State, fd: FormData): Promise<State> {
       now() + make_interval(mins => ${parsed.data.minutes}))`;
   await logEvent(user.id, "secret_locked", { id, label: parsed.data.label, minutes: parsed.data.minutes });
   redirect(`/vault/${id}`);
+}
+
+/** Generates a random 4-digit Screen Time code, locks it, and returns it once for guided entry. */
+export async function createGuidedSecret(fd: FormData): Promise<{ error: string } | { id: string; code: string }> {
+  const user = await requireUser();
+  const parsed = z
+    .object({ label: z.string().trim().min(1, "Give it a name").max(80), minutes })
+    .safeParse(Object.fromEntries(fd));
+  if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Invalid input" };
+
+  const [{ n }] = await sql<{ n: number }>`SELECT count(*)::int AS n FROM secrets WHERE user_id = ${user.id}`;
+  if (n >= MAX_SECRETS) return { error: `Limit of ${MAX_SECRETS} secrets reached` };
+
+  const id = crypto.randomUUID();
+  const code = String(randomInt(0, 10000)).padStart(4, "0");
+  const payload = encryptSecret(code, user.id, id);
+  await sql`INSERT INTO secrets (id, user_id, label, kind, payload, unlock_at)
+    VALUES (${id}, ${user.id}, ${parsed.data.label}, 'screentime', ${payload},
+      now() + make_interval(mins => ${parsed.data.minutes}))`;
+  await logEvent(user.id, "secret_locked", { id, label: parsed.data.label, minutes: parsed.data.minutes, guided: true });
+  return { id, code };
 }
 
 /** Adds time to the lock. Time can only be added, never removed. */
