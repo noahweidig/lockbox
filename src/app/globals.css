@@ -110,6 +110,8 @@ p { margin: 0 0 1em; }
   min-height: 40px; min-width: 40px; padding: 8px 12px; border-radius: 10px;
   color: var(--muted); font: inherit; font-size: 0.95rem; background: none; border: 0; cursor: pointer;
 }
+.nav nav a, .nav nav button.link { white-space: nowrap; }
+@media (max-width: 1000px) { .nav .lbl { display: none; } }
 .nav nav a:not(.btn):hover, .nav nav button.link:hover, .theme-btn:hover { color: var(--text); background: var(--panel-2); text-decoration: none; }
 .nav nav a.btn { min-height: 40px; padding: 8px 16px; margin-left: 6px; border-radius: 10px; font-size: 0.95rem; color: var(--on-accent); white-space: nowrap; }
 .nav nav a.btn:hover { color: var(--on-accent); }
@@ -223,7 +225,6 @@ form.inline .msg { margin-bottom: 8px; }
 
 @media (max-width: 640px) {
   .wrap { width: calc(100% - 32px); }
-  .nav .lbl { display: none; }
   .nav nav a:not(.btn), .nav nav button.link, .theme-btn { padding: 8px; }
   .nav nav a.btn { padding: 8px 14px; }
   .card { padding: 18px; border-radius: 14px; }
