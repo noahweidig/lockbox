@@ -28,7 +28,7 @@ export default async function SettingsPage() {
     SELECT type, created_at FROM events WHERE user_id = ${user.id} ORDER BY created_at DESC LIMIT 15`;
 
   return (
-    <div className="stack" style={{ maxWidth: 720 }}>
+    <div className="stack col">
       <div className="page-head" style={{ margin: 0 }}><h1>Settings</h1></div>
 
       <div className="card stack">

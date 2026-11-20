@@ -28,7 +28,7 @@ export default async function SecretPage({ params }: { params: Promise<{ id: str
   const fmt = (d: string) => new Date(d).toUTCString();
 
   return (
-    <div className="stack" style={{ maxWidth: 720 }}>
+    <div className="stack col">
       <Link href="/vault" className="hint"><ArrowLeft size={14} style={{ verticalAlign: -2 }} /> Back to vault</Link>
       <div className="page-head" style={{ margin: 0 }}>
         <div>

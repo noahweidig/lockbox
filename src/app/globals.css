@@ -249,3 +249,4 @@ form.inline .msg { margin-bottom: 8px; }
   .table td > * { min-width: 0; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+.col { width: 100%; max-width: 720px; margin-inline: auto; }
