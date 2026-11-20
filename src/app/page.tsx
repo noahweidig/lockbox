@@ -39,6 +39,7 @@ export default async function Home() {
       </header>
 
       <section className="hero">
+        <div className="eyebrow"><i /> Open source · AES-256 encrypted</div>
         <h1>
           Lock your passcodes
           <br />
@@ -51,7 +52,23 @@ export default async function Home() {
           <Link href={user ? "/vault/new" : "/register"} className="btn btn-primary btn-lg"><Lock size={18} /> Lock a passcode</Link>
           <a href="#how" className="btn btn-lg">How it works <ArrowRight size={18} /></a>
         </div>
+        <div className="showcase" aria-hidden="true">
+          <div className="card">
+            <div className="top">
+              <div><b>Screen Time · Maya</b><small>Locked secret</small></div>
+              <span className="badge badge-locked"><Lock size={14} /> 4d 06h</span>
+            </div>
+            <div className="bar"><i /></div>
+            <div className="top"><small>Unlocks Sunday 9:00 AM</small><small className="mono">••••••</small></div>
+          </div>
+        </div>
       </section>
+
+      <div className="proof">
+        <div><b>5 min</b><span>shortest lock</span></div>
+        <div><b>365 d</b><span>longest lock</span></div>
+        <div><b>24 h</b><span>reset cooldown</span></div>
+      </div>
 
       <section className="section grid">
         {features.map(([Icon, t, d]) => (
@@ -72,6 +89,14 @@ export default async function Home() {
               <p className="muted" style={{ margin: 0 }}>{d}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="card cta">
+          <h2>Hand your future self a timer.</h2>
+          <p>Free, open source, and set up in under a minute.</p>
+          <Link href={user ? "/vault/new" : "/register"} className="btn btn-primary btn-lg"><Lock size={18} /> Lock a passcode</Link>
         </div>
       </section>
 
