@@ -108,7 +108,7 @@ export function GuidedEntry() {
             code can&apos;t be read back until the lock ends.
           </p>
           {err && <p className="msg msg-err" role="alert">{err}</p>}
-          <button className="btn btn-primary" disabled={busy}>
+          <button type="submit" className="btn btn-primary" disabled={busy}>
             {busy ? "Locking…" : "Generate, lock and start"}
           </button>
         </form>
@@ -167,7 +167,7 @@ export function GuidedEntry() {
           </div>
           {tasksLeft > 1 && <p className="hint">Round break: {tasksLeft} tasks left before the next digit.</p>}
           {wrong && <p className="msg msg-err" role="alert">Not right. Check and try again.</p>}
-          <button className="btn btn-primary">Check</button>
+          <button type="submit" className="btn btn-primary">Check</button>
         </form>
       )}
 
