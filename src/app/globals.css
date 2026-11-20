@@ -15,7 +15,7 @@
   --warn: #fbbf24;
   --glow-1: rgba(139, 123, 255, 0.22);
   --glow-2: rgba(56, 225, 255, 0.14);
-  --shadow: 0 8px 30px -8px rgba(139, 123, 255, 0.7);
+  --shadow: 0 6px 18px -10px rgba(139, 123, 255, 0.65);
   --nav-bg: rgba(7, 8, 15, 0.72);
   --radius: 16px;
   color-scheme: dark;
@@ -37,7 +37,7 @@
   --warn: #b45309;
   --glow-1: rgba(109, 94, 252, 0.14);
   --glow-2: rgba(8, 145, 178, 0.1);
-  --shadow: 0 8px 24px -8px rgba(109, 94, 252, 0.55);
+  --shadow: 0 6px 16px -10px rgba(109, 94, 252, 0.5);
   --nav-bg: rgba(246, 247, 252, 0.8);
   color-scheme: light;
 }
@@ -59,7 +59,7 @@
     --warn: #b45309;
     --glow-1: rgba(109, 94, 252, 0.14);
     --glow-2: rgba(8, 145, 178, 0.1);
-    --shadow: 0 8px 24px -8px rgba(109, 94, 252, 0.55);
+    --shadow: 0 6px 16px -10px rgba(109, 94, 252, 0.5);
     --nav-bg: rgba(246, 247, 252, 0.8);
     color-scheme: light;
   }
@@ -170,7 +170,7 @@ select { width: auto; }
 .page-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 16px 0 24px; flex-wrap: wrap; }
 .page-head h1 { font-size: clamp(1.6rem, 5vw, 2rem); margin: 0; }
 .secret { display: flex; align-items: center; justify-content: space-between; gap: 16px; color: inherit; padding: 18px 20px; }
-.secret:hover { text-decoration: none; background: var(--panel-2); }
+.secret:hover { text-decoration: none; background: var(--panel-2); border-color: color-mix(in srgb, var(--accent) 40%, var(--line)); }
 .secret > div:first-child { min-width: 0; }
 .secret h3 { margin: 0 0 2px; overflow-wrap: anywhere; }
 .badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 0.8rem; font-weight: 600; white-space: nowrap; }
@@ -222,18 +222,25 @@ form.inline .msg { margin-bottom: 8px; }
 .sub summary > span:first-child { min-width: 0; overflow-wrap: anywhere; }
 
 @media (max-width: 640px) {
-  .wrap { width: calc(100% - 28px); }
+  .wrap { width: calc(100% - 32px); }
   .nav .lbl { display: none; }
   .nav nav a:not(.btn), .nav nav button.link, .theme-btn { padding: 8px; }
   .nav nav a.btn { padding: 8px 14px; }
   .card { padding: 18px; border-radius: 14px; }
+  .page-head { margin: 8px 0 18px; }
+  .log li { font-size: 0.86rem; }
   .hero .row { flex-direction: column; align-items: stretch; }
   .hero .btn { width: 100%; }
   .page-head .btn { width: 100%; }
   .secret { padding: 16px; gap: 10px; }
   .secret > .row { flex-wrap: nowrap; gap: 6px; }
   .clock { gap: 6px; }
-  .dur input { width: 72px; }
+  .dur { flex-wrap: nowrap; gap: 8px; }
+  .dur label { flex: 1 1 0; min-width: 0; gap: 6px; }
+  .dur input { width: 100%; flex: 1; min-width: 0; padding-inline: 10px; }
+  .chips { flex-wrap: nowrap; overflow-x: auto; margin: 0 -18px; padding: 2px 18px 4px; scrollbar-width: none; }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip { flex: none; }
   .actions .btn, .actions form { width: 100%; }
   .row.search { width: 100%; }
   form.search { width: 100%; }
