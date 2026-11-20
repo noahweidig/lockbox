@@ -14,7 +14,7 @@ const features = [
 ] as const;
 
 const steps = [
-  ["Set a random passcode", "Generate a code in LockBox and enter it in iOS Screen Time, Android Digital Wellbeing, or any app."],
+  ["Set a random passcode", "Generate a code in LokBoks and enter it in iOS Screen Time, Android Digital Wellbeing, or any app."],
   ["Lock it away", "Choose how long. Paste, save, and forget the code."],
   ["Get it back later", "When the timer ends, confirm your password and reveal the code for 30 seconds."],
 ];
@@ -45,7 +45,7 @@ export default async function Home() {
           <span>until you&apos;re ready.</span>
         </h1>
         <p>
-          LockBox keeps your Screen Time passcode and other secrets behind a time lock that you can&apos;t talk yourself out of.
+          LokBoks keeps your Screen Time passcode and other secrets behind a time lock that you can&apos;t talk yourself out of.
         </p>
         <div className="row">
           <Link href={user ? "/vault/new" : "/register"} className="btn btn-primary btn-lg"><Lock size={18} /> Lock a passcode</Link>
@@ -75,7 +75,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <footer className="footer">LockBox is open source under the MIT license.</footer>
+      <footer className="footer">LokBoks is open source under the MIT license.</footer>
     </div>
   );
 }

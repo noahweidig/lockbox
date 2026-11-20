@@ -18,7 +18,7 @@ export async function sendMail(m: Mail) {
     method: "POST",
     headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
     body: JSON.stringify({
-      from: process.env.EMAIL_FROM ?? "LockBox <onboarding@resend.dev>",
+      from: process.env.EMAIL_FROM ?? "LokBoks <onboarding@resend.dev>",
       to: m.to,
       subject: m.subject,
       text: m.text,
@@ -37,7 +37,7 @@ function layout(title: string, body: string, url: string, cta: string) {
 
 export const resetMail = (to: string, url: string): Mail => ({
   to,
-  subject: "Reset your LockBox password",
+  subject: "Reset your LokBoks password",
   text: `Reset your password (valid 1 hour): ${url}\n\nResetting a password pauses secret reveals for 24 hours. Ignore this email if you didn't ask.`,
   html: layout(
     "Reset your password",
@@ -49,7 +49,7 @@ export const resetMail = (to: string, url: string): Mail => ({
 
 export const verifyMail = (to: string, url: string): Mail => ({
   to,
-  subject: "Confirm your LockBox email",
+  subject: "Confirm your LokBoks email",
   text: `Confirm your email: ${url}`,
   html: layout("Confirm your email", "Confirm this address so you can recover your account.", url, "Confirm email"),
 });

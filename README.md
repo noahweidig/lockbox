@@ -1,4 +1,4 @@
-# LockBox
+# LokBoks
 
 Open source time-lock vault for Screen Time passcodes and other secrets. Next.js + Neon Postgres, deployed on Vercel.
 
