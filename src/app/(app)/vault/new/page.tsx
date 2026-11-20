@@ -31,7 +31,7 @@ export default function NewSecret() {
           <DurationField />
           <RetrievalField />
           <p className="hint">
-            <Lock size={13} style={{ verticalAlign: -2 }} /> Locks can be extended but never shortened or removed.
+            <Lock size={13} style={{ verticalAlign: -2 }} /> Locks can be extended but never shortened. You can still delete the secret, which destroys it.
           </p>
         </ActionForm>
       </div>
