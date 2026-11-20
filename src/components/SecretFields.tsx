@@ -96,20 +96,42 @@ const PRESETS: [string, number][] = [
   ["90 days", 129600],
 ];
 
-export function DurationField({ defaultMinutes = 1440, label = "Lock for" }: { defaultMinutes?: number; label?: string }) {
+export const RETRIEVAL_PRESETS: [string, number][] = [
+  ["Off", 0],
+  ["5 min", 5],
+  ["15 min", 15],
+  ["30 min", 30],
+  ["1 hour", 60],
+  ["2 hours", 120],
+];
+
+export function DurationField({
+  defaultMinutes = 1440,
+  label = "Lock for",
+  name = "minutes",
+  presets = PRESETS,
+  maxMinutes = 365 * 1440,
+}: {
+  defaultMinutes?: number;
+  label?: string;
+  name?: string;
+  presets?: [string, number][];
+  maxMinutes?: number;
+}) {
   const [mins, setMins] = useState(defaultMinutes);
   const days = Math.floor(mins / 1440);
   const hours = Math.floor((mins % 1440) / 60);
   const rest = mins % 60;
 
-  const set = (d: number, h: number, m: number) => setMins(Math.max(0, d) * 1440 + Math.max(0, h) * 60 + Math.max(0, m));
+  const set = (d: number, h: number, m: number) =>
+    setMins(Math.min(maxMinutes, Math.max(0, d) * 1440 + Math.max(0, h) * 60 + Math.max(0, m)));
 
   return (
     <div className="field">
       <span className="label">{label}</span>
-      <input type="hidden" name="minutes" value={mins} />
+      <input type="hidden" name={name} value={mins} />
       <div className="chips">
-        {PRESETS.map(([t, m]) => (
+        {presets.map(([t, m]) => (
           <button type="button" key={m} className={`chip ${mins === m ? "on" : ""}`} onClick={() => setMins(m)}>
             {t}
           </button>
@@ -129,6 +151,24 @@ export function DurationField({ defaultMinutes = 1440, label = "Lock for" }: { d
           min
         </label>
       </div>
+    </div>
+  );
+}
+
+export function RetrievalField() {
+  return (
+    <div className="stack">
+      <DurationField
+        name="retrieval"
+        label="Retrieval task"
+        defaultMinutes={0}
+        presets={RETRIEVAL_PRESETS}
+        maxMinutes={120}
+      />
+      <p className="hint">
+        To read this later you must stay on the page this long and pass a Face ID, Touch ID or device-PIN passkey
+        check-in every few minutes. Needs a passkey added in Settings. Off by default.
+      </p>
     </div>
   );
 }

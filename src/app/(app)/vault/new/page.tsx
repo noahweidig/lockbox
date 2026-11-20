@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowLeft, Lock } from "lucide-react";
 import { createSecret } from "@/app/actions/secrets";
 import { ActionForm } from "@/components/ActionForm";
-import { DurationField, PasscodeField } from "@/components/SecretFields";
+import { DurationField, PasscodeField, RetrievalField } from "@/components/SecretFields";
 import { KINDS } from "@/lib/format";
 
 export const metadata = { title: "New lock" };
@@ -29,6 +29,7 @@ export default function NewSecret() {
           </div>
           <PasscodeField />
           <DurationField />
+          <RetrievalField />
           <p className="hint">
             <Lock size={13} style={{ verticalAlign: -2 }} /> Locks can be extended but never shortened or removed.
           </p>

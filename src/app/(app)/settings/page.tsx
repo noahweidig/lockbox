@@ -1,6 +1,8 @@
-import { BadgeCheck, MailWarning } from "lucide-react";
+import { BadgeCheck, Fingerprint, MailWarning } from "lucide-react";
 import { changePassword, deleteAccount, signOutEverywhere } from "@/app/actions/auth";
+import { deletePasskey } from "@/app/actions/passkeys";
 import { ActionForm } from "@/components/ActionForm";
+import { AddPasskey } from "@/components/PasskeyManager";
 import { requireUser } from "@/lib/auth";
 import { sql } from "@/lib/db";
 
@@ -20,12 +22,21 @@ const LABELS: Record<string, string> = {
   reveal_bad_password: "Reveal attempt, wrong password",
   secret_deleted: "Secret deleted",
   signed_out_everywhere: "Signed out everywhere",
+  passkey_added: "Passkey added",
+  passkey_removed: "Passkey removed",
+  retrieval_started: "Retrieval started",
+  retrieval_failed: "Retrieval failed",
+  retrieval_completed: "Retrieval completed",
 };
 
 export default async function SettingsPage() {
   const user = await requireUser();
   const events = await sql<{ type: string; created_at: string }>`
     SELECT type, created_at FROM events WHERE user_id = ${user.id} ORDER BY created_at DESC LIMIT 15`;
+
+  const keys = await sql<{ id: string; label: string; created_at: string; active: boolean; last_used_at: string | null }>`
+    SELECT id, label, created_at, last_used_at, created_at <= now() - interval '24 hours' AS active
+    FROM passkeys WHERE user_id = ${user.id} ORDER BY created_at`;
 
   return (
     <div className="stack col">
@@ -41,6 +52,34 @@ export default async function SettingsPage() {
             <span className="badge badge-locked"><MailWarning size={14} /> Unconfirmed</span>
           )}
         </p>
+      </div>
+
+      <div className="card stack">
+        <h3><Fingerprint size={16} style={{ verticalAlign: -3 }} /> Passkeys</h3>
+        <p className="hint">
+          Passkeys answer the check-ins during a retrieval task. Use Face ID, Touch ID or a device PIN. A new passkey
+          works for check-ins after 24 hours.
+        </p>
+        {keys.map((k) => (
+          <details key={k.id} className="sub">
+            <summary>
+              <span>{k.label}</span>
+              <span className={`badge ${k.active ? "badge-open" : "badge-locked"}`}>
+                {k.active ? "Active" : `Active ${new Date(new Date(k.created_at).getTime() + 864e5).toUTCString().slice(5, 22)} UTC`}
+              </span>
+            </summary>
+            <div className="sp" />
+            <ActionForm action={deletePasskey} submit="Remove passkey" buttonClass="btn btn-danger">
+              <input type="hidden" name="id" value={k.id} />
+              <div className="field">
+                <label htmlFor={`rm-${k.id}`}>Password</label>
+                <input id={`rm-${k.id}`} name="password" type="password" autoComplete="current-password" required />
+              </div>
+              <p className="hint">Removing a passkey resets any retrieval in progress.</p>
+            </ActionForm>
+          </details>
+        ))}
+        <AddPasskey />
       </div>
 
       <div className="card stack">

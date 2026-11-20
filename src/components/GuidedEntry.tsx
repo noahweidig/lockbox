@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Eye, RotateCcw, Shield } from "lucide-react";
 import { createGuidedSecret } from "@/app/actions/secrets";
-import { DurationField } from "@/components/SecretFields";
+import { DurationField, RetrievalField } from "@/components/SecretFields";
 import { nextTask, type Task } from "@/lib/guided";
 
 const PER_ROUND = 4;
@@ -102,6 +102,7 @@ export function GuidedEntry() {
             <input id="label" name="label" defaultValue="iPhone Screen Time" maxLength={80} required />
           </div>
           <DurationField />
+          <RetrievalField />
           <p className="hint">
             On the iPhone, open Screen Time and start setting or changing the passcode, then come back here. If it offers
             Apple Account recovery, skip it, since that route can reset the code. Keep this tab open until the end; the
