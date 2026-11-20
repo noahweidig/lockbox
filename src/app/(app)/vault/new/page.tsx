@@ -12,6 +12,9 @@ export default function NewSecret() {
     <div className="narrow" style={{ width: "min(560px, 100%)" }}>
       <Link href="/vault" className="back"><ArrowLeft size={16} /> Back to vault</Link>
       <div className="page-head"><h1>Lock a secret</h1></div>
+      <p className="banner">
+        Setting an iPhone Screen Time passcode? <Link href="/vault/guided">Use guided entry</Link> so you never see the whole code.
+      </p>
       <div className="card">
         <ActionForm action={createSecret} submit="Lock it away">
           <div className="field">
